@@ -26,7 +26,7 @@ class Button extends StatelessWidget {
 
     return buttonType == ButtonType.ghost
         ? TextButton(
-            onPressed: () {},
+            onPressed: onPressed,
             child: buttonTxt,
           )
         : Container(

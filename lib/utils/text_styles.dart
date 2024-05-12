@@ -16,7 +16,7 @@ const TextStyle kHeadingLg = TextStyle(
 const TextStyle kHeading = TextStyle(
   fontSize: 18,
   color: kDark,
-  fontWeight: FontWeight.bold
+  fontWeight: FontWeight.w700
 );
 
 const TextStyle kBodyLg = TextStyle(
