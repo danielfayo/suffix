@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:suffix/view_models/gameplay_viewmodel.dart';
 import 'package:suffix/views/home/home_screen.dart';
 
 // void main() {
@@ -19,12 +21,15 @@ class Suffix extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(),
-      home: MaterialApp(
-          theme: ThemeData(textTheme: GoogleFonts.spaceGroteskTextTheme()),
-          home: const HomeScreen()),
+    return ChangeNotifierProvider(
+      create: (context) => GameplayViewModel(),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(),
+        home: MaterialApp(
+            theme: ThemeData(textTheme: GoogleFonts.spaceGroteskTextTheme()),
+            home: const HomeScreen()),
+      ),
     );
   }
 }
