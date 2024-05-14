@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:suffix/utils/colors.dart';
 import 'package:suffix/utils/enums.dart';
 import 'package:suffix/utils/text_styles.dart';
+import 'package:suffix/view_models/gameplay_viewmodel.dart';
+import 'package:suffix/views/home/widget/feedback_modal.dart';
 import 'package:suffix/widgets/button.dart';
 
 class Keyboard extends StatelessWidget {
@@ -9,10 +12,12 @@ class Keyboard extends StatelessWidget {
     super.key,
     required this.tapText,
     required this.tapDel,
+    required this.tapSubmit,
   });
 
   final void Function(String keyText) tapText;
   final void Function() tapDel;
+  final void Function() tapSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -24,17 +29,22 @@ class Keyboard extends StatelessWidget {
         ),
         Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: _buildKeyRows(context),
+          children: _buildKeyRows(context,
+              tapDel: tapDel, tapText: tapText, handleSubmit: tapSubmit),
         ),
       ],
     );
   }
 }
 
-List<Widget> _buildKeyRows(BuildContext context) {
+List<Widget> _buildKeyRows(BuildContext context,
+    {required Function() tapDel,
+    required Function(String keyText) tapText,
+    required Function() handleSubmit}) {
   return [
     _buildKeyRow(
-        ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'], KeyType.text),
+        ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'], KeyType.text,
+        tapDel: tapDel, tapText: tapText),
     const SizedBox(
       height: 8,
     ),
@@ -42,7 +52,8 @@ List<Widget> _buildKeyRows(BuildContext context) {
       padding: EdgeInsets.symmetric(
           horizontal: (MediaQuery.of(context).size.width / 11) / 2),
       child: _buildKeyRow(
-          ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'], KeyType.text),
+          ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'], KeyType.text,
+          tapDel: tapDel, tapText: tapText),
     ),
     const SizedBox(
       height: 8,
@@ -57,37 +68,42 @@ List<Widget> _buildKeyRows(BuildContext context) {
                     keyType: e.toLowerCase() == "del"
                         ? KeyType.delete
                         : KeyType.text,
+                    tapDel: tapDel,
+                    tapText: tapText,
                   ))
-              .toList()
-          // [
-
-          //   keyboardKey("Z", KeyType.text),
-          //   keyboardKey("C", KeyType.text),
-          //   keyboardKey("V", KeyType.text),
-          //   keyboardKey("B", KeyType.text),
-          //   keyboardKey("N", KeyType.text),
-          //   keyboardKey("M", KeyType.text),
-          //   keyboardKey("DEL", KeyType.delete),
-          // ],
-          ),
+              .toList()),
     ),
     const SizedBox(
       height: 16,
     ),
-    const Button(
-      buttonText: "Submit",
-      buttonType: ButtonType.secondary,
-      buttonSize: ButtonSize.small,
-    ),
+    Consumer<GameplayViewModel>(builder: (ctxt, value, child) {
+      return SizedBox(
+        height: 48,
+        child: Button(
+          buttonText: "Submit",
+          buttonType: ButtonType.secondary,
+          buttonSize: ButtonSize.medium,
+          onPressed: () {
+            value.newGuess();
+            if (value.wordIsCorrect) {
+              showFeedbackModal(context);
+            }
+          },
+        ),
+      );
+    }),
   ];
 }
 
-Widget _buildKeyRow(List<String> keys, KeyType keyType) {
+Widget _buildKeyRow(List<String> keys, KeyType keyType,
+    {required Function() tapDel, required Function(String keyText) tapText}) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: keys
         .map((key) => KeyboardKey(
               keyText: key,
+              tapDel: tapDel,
+              tapText: tapText,
             ))
         .toList(),
   );
@@ -96,9 +112,16 @@ Widget _buildKeyRow(List<String> keys, KeyType keyType) {
 class KeyboardKey extends StatefulWidget {
   final String keyText;
   final KeyType keyType;
+  final Function(String key)? tapText;
+  final void Function()? tapDel;
 
-  const KeyboardKey(
-      {super.key, required this.keyText, this.keyType = KeyType.text});
+  const KeyboardKey({
+    super.key,
+    required this.keyText,
+    this.keyType = KeyType.text,
+    this.tapText,
+    this.tapDel,
+  });
 
   @override
   State<KeyboardKey> createState() => _KeyboardKeyState();
@@ -110,10 +133,18 @@ class _KeyboardKeyState extends State<KeyboardKey> {
   Widget build(BuildContext context) {
     return Expanded(
       flex: widget.keyText == "DEL" ? 3 : 2,
+      // 
       child: InkWell(
         onTap: () {
           tapped = false;
           setState(() {});
+          if (widget.tapDel != null && widget.keyText == "DEL") {
+            widget.tapDel!();
+            return;
+          }
+          if (widget.tapText != null) {
+            widget.tapText!(widget.keyText);
+          }
         },
         onTapDown: (details) {
           tapped = true;
@@ -123,32 +154,30 @@ class _KeyboardKeyState extends State<KeyboardKey> {
           tapped = false;
           setState(() {});
         },
-        child: AnimatedScale(
-          duration: const Duration(milliseconds: 500),
-          scale: tapped ? 0.89 : 1,
-          child: Container(
-            height: 40,
-            margin: const EdgeInsets.all(2.0),
-            decoration: BoxDecoration(
-                color: kAccent,
-                borderRadius: BorderRadius.circular(4.0),
-                boxShadow: const [
-                  BoxShadow(
-                    color: kDark,
-                    spreadRadius: 0,
-                    blurRadius: 0,
-                    offset: Offset(3, 3),
-                  ),
-                ],
-                border: Border.all(
-                  width: 1,
-                  color: kDark,
-                )),
-            child: Center(
-              child: Text(
-                widget.keyText,
-                style: kHeading,
-              ),
+        child: Container(
+          height: 40,
+          margin: const EdgeInsets.all(2.0),
+          decoration: BoxDecoration(
+              color: kAccent,
+              borderRadius: BorderRadius.circular(4.0),
+              boxShadow: tapped
+                  ? []
+                  : const [
+                      BoxShadow(
+                        color: kDark,
+                        spreadRadius: 0,
+                        blurRadius: 0,
+                        offset: Offset(3, 3),
+                      ),
+                    ],
+              border: Border.all(
+                width: 1,
+                color: kDark,
+              )),
+          child: Center(
+            child: Text(
+              widget.keyText,
+              style: kHeading,
             ),
           ),
         ),
@@ -157,44 +186,45 @@ class _KeyboardKeyState extends State<KeyboardKey> {
   }
 }
 
-Widget keyboardKey(String keyText, KeyType keyType) {
-  return Expanded(
-    flex: keyText == "DEL" ? 3 : 2,
-    child: GestureDetector(
-      onTap: () {
-        // if (keyType == KeyType.enter) {
-        //   tapEnt();
-        // } else if (keyType == KeyType.delete) {
-        //   tapDel();
-        // } else {
-        //   tapText(keyText);
-        // }
-      },
-      child: Container(
-        height: 40,
-        margin: const EdgeInsets.all(2.0),
-        decoration: BoxDecoration(
-            color: kAccent,
-            borderRadius: BorderRadius.circular(4.0),
-            boxShadow: const [
-              BoxShadow(
-                color: kDark,
-                spreadRadius: 0,
-                blurRadius: 0,
-                offset: Offset(3, 3),
-              ),
-            ],
-            border: Border.all(
-              width: 1,
-              color: kDark,
-            )),
-        child: Center(
-          child: Text(
-            keyText,
-            style: kHeading,
-          ),
-        ),
-      ),
-    ),
-  );
-}
+// Widget keyboardKey(String keyText, KeyType keyType) {
+//   return Expanded(
+//     flex: keyText == "DEL" ? 3 : 2,
+//     child: GestureDetector(
+//       onTap: () {
+//         // if (keyType == KeyType.enter) {
+//         //   tapEnt();
+//         // } else if (keyType == KeyType.delete) {
+//         //   tapDel();
+//         // } else {
+//         //   tapText(keyText);
+//         // }
+//       },
+//       child: Container(
+//         height: 40,
+//         margin: const EdgeInsets.all(2.0),
+//         decoration: BoxDecoration(
+//           color: kAccent,
+//           borderRadius: BorderRadius.circular(4.0),
+//           boxShadow: const [
+//             BoxShadow(
+//               color: kDark,
+//               spreadRadius: 0,
+//               blurRadius: 0,
+//               offset: Offset(3, 3),
+//             ),
+//           ],
+//           border: Border.all(
+//             width: 1,
+//             color: kDark,
+//           ),
+//         ),
+//         child: Center(
+//           child: Text(
+//             keyText,
+//             style: kHeading,
+//           ),
+//         ),
+//       ),
+//     ),
+//   );
+// }
