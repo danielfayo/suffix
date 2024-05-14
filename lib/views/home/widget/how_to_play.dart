@@ -16,14 +16,14 @@ const String _hTp4 =
 const String _hTp5 = "White letters indicate that a letter is not in the word.";
 
 void showHowToPlay(BuildContext context) {
-  print("object");
   showDialog(
-      context: context,
-      builder: (context) => const Dialog(
-            backgroundColor: Colors.transparent,
-            insetPadding: EdgeInsets.symmetric(horizontal: 16),
-            child: HowToPlayDialog(),
-          ));
+    context: context,
+    builder: (context) => const Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: EdgeInsets.symmetric(horizontal: 16),
+      child: HowToPlayDialog(),
+    ),
+  );
 }
 
 class HowToPlayDialog extends StatelessWidget {
@@ -79,36 +79,45 @@ class HowToPlayDialog extends StatelessWidget {
                   _hTp2,
                   style: kBody,
                 ),
-                _hintAndIllustration(text: _hTp3,blockLetters: ["R", "O", "B", "I", "N"]
-                .map((e) => GuessBlock(
-                      guessLetter: e,
-                      guessState: e == "R"
-                          ? GuessBlockState.inRightPlace
-                          : GuessBlockState.notInWord,
-                    ))
-                .toList()),
-                _hintAndIllustration(text: _hTp4,blockLetters: ["S", "P", "E", "A", "R"]
-                .map((e) => GuessBlock(
-                      guessLetter: e,
-                      guessState: e == "E"
-                          ? GuessBlockState.inWord
-                          : GuessBlockState.notInWord,
-                    ))
-                .toList()),
-                _hintAndIllustration(text: _hTp5,blockLetters: ["L", "O", "O", "P", "S"]
-                .map((e) => GuessBlock(
-                      guessLetter: e,
-                    ))
-                .toList())
+                _hintAndIllustration(
+                    text: _hTp3,
+                    blockLetters: ["R", "O", "B", "I", "N"]
+                        .map((e) => GuessBlock(
+                              guessLetter: e,
+                              guessState: e == "R"
+                                  ? GuessBlockState.inRightPlace
+                                  : GuessBlockState.notInWord,
+                            ))
+                        .toList()),
+                _hintAndIllustration(
+                    text: _hTp4,
+                    blockLetters: ["S", "P", "E", "A", "R"]
+                        .map((e) => GuessBlock(
+                              guessLetter: e,
+                              guessState: e == "E"
+                                  ? GuessBlockState.inWord
+                                  : GuessBlockState.notInWord,
+                            ))
+                        .toList()),
+                _hintAndIllustration(
+                    text: _hTp5,
+                    blockLetters: ["L", "O", "O", "P", "S"]
+                        .map((e) => GuessBlock(
+                              guessLetter: e,
+                            ))
+                        .toList())
               ],
             ),
-            const SizedBox(height:40),
-            Button(
-                  buttonText: "Got it",
-                  onPressed: () => Navigator.pop(context),
-                  buttonType: ButtonType.secondary,
-                  buttonSize: ButtonSize.small,
-                )
+            const SizedBox(height: 40),
+            SizedBox(
+              height: 48,
+              child: Button(
+                buttonText: "Got it",
+                onPressed: () => Navigator.pop(context),
+                buttonType: ButtonType.secondary,
+                buttonSize: ButtonSize.small,
+              ),
+            )
           ],
         ),
       ),
@@ -116,7 +125,9 @@ class HowToPlayDialog extends StatelessWidget {
   }
 }
 
-Widget _hintAndIllustration({required String text,required List<GuessBlock> blockLetters}) => Column(
+Widget _hintAndIllustration(
+        {required String text, required List<GuessBlock> blockLetters}) =>
+    Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -126,8 +137,6 @@ Widget _hintAndIllustration({required String text,required List<GuessBlock> bloc
         const SizedBox(
           height: 8,
         ),
-        Wrap(
-            spacing: 8,
-            children: blockLetters),
+        Wrap(spacing: 8, children: blockLetters),
       ],
     );
