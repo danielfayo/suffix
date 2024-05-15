@@ -128,11 +128,22 @@ class GameplayViewModel extends ChangeNotifier {
     }
     words = emptyWords;
     numberOfGuesses = 0;
+    _letterPosition = 0;
     notifyListeners();
   }
 
 // Empties the word array
   void emptyAllWords() {
     words = [];
+  }
+
+// Provides a letter hint for the user
+  void getHint() {
+    for (var i = 0; i < wordToGuess.length; i++) {
+      if (i == _letterPosition) {
+        handleTapLetter(wordToGuess[_letterPosition]);
+        return;
+      }
+    }
   }
 }

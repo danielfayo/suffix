@@ -34,52 +34,52 @@ class _GameScreenState extends State<GameScreen> {
       body: SafeArea(
           child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 96,
-                  height: 36,
-                  child: Button(
-                    buttonText: "Menu",
-                    buttonType: ButtonType.secondary,
-                    buttonSize: ButtonSize.small,
-                    onPressed: () => showMenuSheet(context),
-                  ),
-                ),
-                const Coins(numberOfCoins: 344),
-                const SizedBox(
-                  width: 96,
-                  height: 36,
-                  child: Button(
-                    buttonText: "-5",
-                    buttonType: ButtonType.secondary,
-                    buttonSize: ButtonSize.small,
-                  ),
-                ),
-              ],
-            ),
-            const Expanded(
-              flex: 2,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+        child: Consumer<GameplayViewModel>(
+            builder: (context, gameplayViewmodel, child) {
+          return Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  GuessWords(),
+                  SizedBox(
+                    width: 96,
+                    height: 36,
+                    child: Button(
+                      buttonText: "Menu",
+                      buttonType: ButtonType.secondary,
+                      buttonSize: ButtonSize.small,
+                      onPressed: () => showMenuSheet(context),
+                    ),
+                  ),
+                  const Coins(numberOfCoins: 344),
+                  SizedBox(
+                    width: 96,
+                    height: 36,
+                    child: Button(
+                      buttonText: "-5",
+                      buttonType: ButtonType.secondary,
+                      buttonSize: ButtonSize.small,
+                      onPressed: () => gameplayViewmodel.getHint(),
+                    ),
+                  ),
                 ],
               ),
-            ),
-            Consumer<GameplayViewModel>(
-              builder: (context, gameplayViewmodel, child) {
-                return const Expanded(
-                  child: Keyboard(),
-                );
-              },
-            )
-          ],
-        ),
+              const Expanded(
+                flex: 2,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GuessWords(),
+                  ],
+                ),
+              ),
+              const Expanded(
+                child: Keyboard(),
+              )
+            ],
+          );
+        }),
       )),
     );
   }
