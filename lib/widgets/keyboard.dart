@@ -5,6 +5,7 @@ import 'package:suffix/utils/enums.dart';
 import 'package:suffix/utils/text_styles.dart';
 import 'package:suffix/view_models/gameplay_viewmodel.dart';
 import 'package:suffix/views/home/widget/feedback_modal.dart';
+import 'package:suffix/views/home/widget/out_of_tries_modal.dart';
 import 'package:suffix/widgets/button.dart';
 
 class Keyboard extends StatelessWidget {
@@ -78,6 +79,10 @@ List<Widget> _buildKeyRows(
             value.newGuess();
             if (value.wordIsCorrect) {
               showFeedbackModal(context);
+              return;
+            }
+            if (value.numberOfGuesses > 5) {
+              showOutOfTriesModal(context);
             }
           },
         ),
