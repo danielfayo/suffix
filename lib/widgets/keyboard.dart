@@ -8,16 +8,7 @@ import 'package:suffix/views/home/widget/feedback_modal.dart';
 import 'package:suffix/widgets/button.dart';
 
 class Keyboard extends StatelessWidget {
-  const Keyboard({
-    super.key,
-    required this.tapText,
-    required this.tapDel,
-    required this.tapSubmit,
-  });
-
-  final void Function(String keyText) tapText;
-  final void Function() tapDel;
-  final void Function() tapSubmit;
+  const Keyboard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,22 +20,23 @@ class Keyboard extends StatelessWidget {
         ),
         Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: _buildKeyRows(context,
-              tapDel: tapDel, tapText: tapText, handleSubmit: tapSubmit),
+          children: _buildKeyRows(
+            context,
+          ),
         ),
       ],
     );
   }
 }
 
-List<Widget> _buildKeyRows(BuildContext context,
-    {required Function() tapDel,
-    required Function(String keyText) tapText,
-    required Function() handleSubmit}) {
+List<Widget> _buildKeyRows(
+  BuildContext context,
+) {
   return [
     _buildKeyRow(
-        ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'], KeyType.text,
-        tapDel: tapDel, tapText: tapText),
+      ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+      KeyType.text,
+    ),
     const SizedBox(
       height: 8,
     ),
@@ -52,8 +44,9 @@ List<Widget> _buildKeyRows(BuildContext context,
       padding: EdgeInsets.symmetric(
           horizontal: (MediaQuery.of(context).size.width / 11) / 2),
       child: _buildKeyRow(
-          ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'], KeyType.text,
-          tapDel: tapDel, tapText: tapText),
+        ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+        KeyType.text,
+      ),
     ),
     const SizedBox(
       height: 8,
@@ -68,8 +61,6 @@ List<Widget> _buildKeyRows(BuildContext context,
                     keyType: e.toLowerCase() == "del"
                         ? KeyType.delete
                         : KeyType.text,
-                    tapDel: tapDel,
-                    tapText: tapText,
                   ))
               .toList()),
     ),
@@ -95,16 +86,15 @@ List<Widget> _buildKeyRows(BuildContext context,
   ];
 }
 
-Widget _buildKeyRow(List<String> keys, KeyType keyType,
-    {required Function() tapDel, required Function(String keyText) tapText}) {
+Widget _buildKeyRow(List<String> keys, KeyType keyType) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: keys
-        .map((key) => KeyboardKey(
-              keyText: key,
-              tapDel: tapDel,
-              tapText: tapText,
-            ))
+        .map(
+          (key) => KeyboardKey(
+            keyText: key,
+          ),
+        )
         .toList(),
   );
 }
@@ -112,15 +102,11 @@ Widget _buildKeyRow(List<String> keys, KeyType keyType,
 class KeyboardKey extends StatefulWidget {
   final String keyText;
   final KeyType keyType;
-  final Function(String key)? tapText;
-  final void Function()? tapDel;
 
   const KeyboardKey({
     super.key,
     required this.keyText,
     this.keyType = KeyType.text,
-    this.tapText,
-    this.tapDel,
   });
 
   @override
@@ -133,55 +119,55 @@ class _KeyboardKeyState extends State<KeyboardKey> {
   Widget build(BuildContext context) {
     return Expanded(
       flex: widget.keyText == "DEL" ? 3 : 2,
-      // 
-      child: InkWell(
-        onTap: () {
-          tapped = false;
-          setState(() {});
-          if (widget.tapDel != null && widget.keyText == "DEL") {
-            widget.tapDel!();
-            return;
-          }
-          if (widget.tapText != null) {
-            widget.tapText!(widget.keyText);
-          }
-        },
-        onTapDown: (details) {
-          tapped = true;
-          setState(() {});
-        },
-        onTapCancel: () {
-          tapped = false;
-          setState(() {});
-        },
-        child: Container(
-          height: 40,
-          margin: const EdgeInsets.all(2.0),
-          decoration: BoxDecoration(
-              color: kAccent,
-              borderRadius: BorderRadius.circular(4.0),
-              boxShadow: tapped
-                  ? []
-                  : const [
-                      BoxShadow(
-                        color: kDark,
-                        spreadRadius: 0,
-                        blurRadius: 0,
-                        offset: Offset(3, 3),
-                      ),
-                    ],
-              border: Border.all(
-                width: 1,
-                color: kDark,
-              )),
-          child: Center(
-            child: Text(
-              widget.keyText,
-              style: kHeading,
+      //
+      child: Consumer<GameplayViewModel>(builder: (context, value, child) {
+        return InkWell(
+          onTap: () {
+            tapped = false;
+            setState(() {});
+            if (widget.keyText == "DEL") {
+              value.backSpace();
+              return;
+            }
+            value.handleTapLetter(widget.keyText);
+          },
+          onTapDown: (details) {
+            tapped = true;
+            setState(() {});
+          },
+          onTapCancel: () {
+            tapped = false;
+            setState(() {});
+          },
+          child: Container(
+            height: 40,
+            margin: const EdgeInsets.all(2.0),
+            decoration: BoxDecoration(
+                color: kAccent,
+                borderRadius: BorderRadius.circular(4.0),
+                boxShadow: tapped
+                    ? []
+                    : const [
+                        BoxShadow(
+                          color: kDark,
+                          spreadRadius: 0,
+                          blurRadius: 0,
+                          offset: Offset(3, 3),
+                        ),
+                      ],
+                border: Border.all(
+                  width: 1,
+                  color: kDark,
+                )),
+            child: Center(
+              child: Text(
+                widget.keyText,
+                style: kHeading,
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }

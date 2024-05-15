@@ -73,16 +73,8 @@ class _GameScreenState extends State<GameScreen> {
             ),
             Consumer<GameplayViewModel>(
               builder: (context, gameplayViewmodel, child) {
-                return Expanded(
-                  child: Keyboard(
-                    tapText: (keyText) {
-                      gameplayViewmodel.handleTapLetter(keyText);
-                    },
-                    tapDel: () {
-                      gameplayViewmodel.backSpace();
-                    },
-                    tapSubmit: () => gameplayViewmodel.newGuess(),
-                  ),
+                return const Expanded(
+                  child: Keyboard(),
                 );
               },
             )
