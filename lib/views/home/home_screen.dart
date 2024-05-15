@@ -34,18 +34,21 @@ class HomeScreen extends StatelessWidget {
             const Spacer(),
             Column(
               children: [
-                Button(
-                  buttonText: _buttonText,
-                  buttonType: ButtonType.primary,
-                  buttonSize: ButtonSize.large,
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const GameScreen(),
-                      ),
-                    );
-                  },
+                SizedBox(
+                  height: 64,
+                  child: Button(
+                    buttonText: _buttonText,
+                    buttonType: ButtonType.primary,
+                    buttonSize: ButtonSize.large,
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const GameScreen(),
+                        ),
+                      );
+                    },
+                  ),
                 ),
                 const SizedBox(
                   height: 8,

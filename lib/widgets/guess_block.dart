@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:suffix/utils/colors.dart';
+import 'package:suffix/utils/enums.dart';
 import 'package:suffix/utils/text_styles.dart';
 
 class GuessBlock extends StatefulWidget {
@@ -32,4 +33,4 @@ class _GuessBlockState extends State<GuessBlock> {
   }
 }
 
-enum GuessBlockState { inWord, inRightPlace, notInWord }
+

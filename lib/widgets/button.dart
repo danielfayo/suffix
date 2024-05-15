@@ -53,14 +53,14 @@ class Button extends StatelessWidget {
                     borderRadius: BorderRadius.circular(99),
                   ),
                 ),
-                padding: MaterialStatePropertyAll(
+                padding: const MaterialStatePropertyAll(
                   EdgeInsets.symmetric(
                     horizontal: 24,
-                    vertical: buttonSize == ButtonSize.large
-                        ? 20
-                        : buttonSize == ButtonSize.medium
-                            ? 16
-                            : 8,
+                    // vertical: buttonSize == ButtonSize.large
+                    //     ? 20
+                    //     : buttonSize == ButtonSize.medium
+                    //         ? 16
+                    //         : 8,
                   ),
                 ),
               ),
