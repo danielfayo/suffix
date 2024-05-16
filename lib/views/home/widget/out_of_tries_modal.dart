@@ -41,10 +41,10 @@ class OutOfTriesModal extends StatelessWidget {
           ],
         ),
         child: Consumer<GameplayViewModel>(
-          builder: (context, value, child) {
+          builder: (newcontext, value, child) {
             return Column(
               children: [
-                const Text(
+                Text(
                   "Out of tries!",
                   style: kHeading,
                 ),

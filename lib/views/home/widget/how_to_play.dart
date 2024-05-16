@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:suffix/utils/colors.dart';
 import 'package:suffix/utils/enums.dart';
@@ -53,7 +53,7 @@ class HowToPlayDialog extends StatelessWidget {
         ),
         child: Column(
           children: [
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // const Opacity(opacity: 0, child: Icon(Icons.close)),
@@ -80,11 +80,11 @@ class HowToPlayDialog extends StatelessWidget {
                   child: Wrap(
                     runSpacing: 24,
                     children: [
-                      const Text(
+                      Text(
                         _hTp1,
                         style: kBody,
                       ),
-                      const Text(
+                    Text(
                         _hTp2,
                         style: kBody,
                       ),

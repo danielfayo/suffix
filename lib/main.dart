@@ -32,7 +32,8 @@ class Suffix extends StatelessWidget {
         title: 'Flutter Demo',
         theme: ThemeData(),
         home: MaterialApp(
-            theme: ThemeData(textTheme: GoogleFonts.spaceGroteskTextTheme()),
+          theme: Theme.of(context).copyWith(textTheme: GoogleFonts.spaceGroteskTextTheme()),
+            // theme: ThemThemeData(textTheme: GoogleFonts.spaceGroteskTextTheme()),
             home: const HomeScreen()),
       ),
     );

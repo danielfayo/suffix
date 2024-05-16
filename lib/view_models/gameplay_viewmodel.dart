@@ -6,7 +6,7 @@ class GameplayViewModel extends ChangeNotifier {
   List<Word> words = [];
   int numberOfGuesses = 0;
   int _letterPosition = 0;
-  int wordLength = 7;
+  int wordLength = 5;
   bool _wordIsComplete = false;
   bool wordIsCorrect = false;
   final String wordToGuess = "LASER";
@@ -129,6 +129,8 @@ class GameplayViewModel extends ChangeNotifier {
     words = emptyWords;
     numberOfGuesses = 0;
     _letterPosition = 0;
+    wordIsCorrect = false;
+    _wordIsComplete = false;
     notifyListeners();
   }
 

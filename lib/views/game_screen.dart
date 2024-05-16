@@ -66,7 +66,8 @@ class _GameScreenState extends State<GameScreen> {
                 ],
               ),
               const Expanded(
-                flex: 2,
+                flex: 3,
+                
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -75,6 +76,7 @@ class _GameScreenState extends State<GameScreen> {
                 ),
               ),
               const Expanded(
+                flex: 2,
                 child: Keyboard(),
               )
             ],

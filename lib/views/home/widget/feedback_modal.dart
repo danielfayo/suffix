@@ -93,6 +93,7 @@ class FeedbackModal extends StatelessWidget {
                     buttonType: ButtonType.ghost,
                     buttonSize: ButtonSize.medium,
                     onPressed: () {
+                      value.handleRestartGame();
                       Navigator.pop(context);
                       Navigator.pushReplacement(
                         context,
