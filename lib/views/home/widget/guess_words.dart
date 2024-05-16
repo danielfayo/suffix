@@ -29,8 +29,8 @@ class WordRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double boxSize = (MediaQuery.of(context).size.width / 7).clamp(40, 47);
-
+    double boxSize = ((MediaQuery.of(context).size.width / 7)-(16*2)).clamp(40, 47);
+    print(boxSize);
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(

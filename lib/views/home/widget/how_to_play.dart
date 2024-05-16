@@ -1,5 +1,5 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:suffix/utils/colors.dart';
 import 'package:suffix/utils/enums.dart';
 import 'package:suffix/utils/text_styles.dart';
