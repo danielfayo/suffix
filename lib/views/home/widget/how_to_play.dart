@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:suffix/utils/colors.dart';
 import 'package:suffix/utils/enums.dart';
 import 'package:suffix/utils/text_styles.dart';
@@ -20,7 +22,7 @@ void showHowToPlay(BuildContext context) {
     context: context,
     builder: (context) => const Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: EdgeInsets.symmetric(horizontal: 16),
+      insetPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: HowToPlayDialog(),
     ),
   );
@@ -68,45 +70,49 @@ class HowToPlayDialog extends StatelessWidget {
             const SizedBox(
               height: 32,
             ),
-            Wrap(
-              runSpacing: 24,
-              children: [
-                const Text(
-                  _hTp1,
-                  style: kBody,
+            Expanded(
+              child: SingleChildScrollView(
+                child: Wrap(
+                  runSpacing: 24,
+                  children: [
+                    const Text(
+                      _hTp1,
+                      style: kBody,
+                    ),
+                    const Text(
+                      _hTp2,
+                      style: kBody,
+                    ),
+                    _hintAndIllustration(
+                        text: _hTp3,
+                        blockLetters: ["R", "O", "B", "I", "N"]
+                            .map((e) => GuessBlock(
+                                  guessLetter: e,
+                                  guessState: e == "R"
+                                      ? GuessBlockState.inRightPlace
+                                      : GuessBlockState.notInWord,
+                                ))
+                            .toList()),
+                    _hintAndIllustration(
+                        text: _hTp4,
+                        blockLetters: ["S", "P", "E", "A", "R"]
+                            .map((e) => GuessBlock(
+                                  guessLetter: e,
+                                  guessState: e == "E"
+                                      ? GuessBlockState.inWord
+                                      : GuessBlockState.notInWord,
+                                ))
+                            .toList()),
+                    _hintAndIllustration(
+                        text: _hTp5,
+                        blockLetters: ["L", "O", "O", "P", "S"]
+                            .map((e) => GuessBlock(
+                                  guessLetter: e,
+                                ))
+                            .toList())
+                  ],
                 ),
-                const Text(
-                  _hTp2,
-                  style: kBody,
-                ),
-                _hintAndIllustration(
-                    text: _hTp3,
-                    blockLetters: ["R", "O", "B", "I", "N"]
-                        .map((e) => GuessBlock(
-                              guessLetter: e,
-                              guessState: e == "R"
-                                  ? GuessBlockState.inRightPlace
-                                  : GuessBlockState.notInWord,
-                            ))
-                        .toList()),
-                _hintAndIllustration(
-                    text: _hTp4,
-                    blockLetters: ["S", "P", "E", "A", "R"]
-                        .map((e) => GuessBlock(
-                              guessLetter: e,
-                              guessState: e == "E"
-                                  ? GuessBlockState.inWord
-                                  : GuessBlockState.notInWord,
-                            ))
-                        .toList()),
-                _hintAndIllustration(
-                    text: _hTp5,
-                    blockLetters: ["L", "O", "O", "P", "S"]
-                        .map((e) => GuessBlock(
-                              guessLetter: e,
-                            ))
-                        .toList())
-              ],
+              ),
             ),
             const SizedBox(height: 40),
             SizedBox(
