@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:suffix/models/services/audio_service.dart';
 import 'package:suffix/utils/colors.dart';
 import 'package:suffix/utils/enums.dart';
 import 'package:suffix/view_models/gameplay_viewmodel.dart';
@@ -64,12 +65,13 @@ class Menu extends StatelessWidget {
                     },
                   ),
                 ),
-                const SizedBox(
+                SizedBox(
                   height: 40,
                   child: Button(
                     buttonText: "Mute sound",
                     buttonType: ButtonType.ghost,
                     buttonSize: ButtonSize.small,
+                    onPressed: ()=>SuffixAudioService().stopAudio(),
                   ),
                 ),
               ],

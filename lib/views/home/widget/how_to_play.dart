@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:suffix/utils/colors.dart';
 import 'package:suffix/utils/enums.dart';
 import 'package:suffix/utils/text_styles.dart';
@@ -18,10 +19,13 @@ const String _hTp5 = "White letters indicate that a letter is not in the word.";
 void showHowToPlay(BuildContext context) {
   showDialog(
     context: context,
-    builder: (context) => const Dialog(
-      backgroundColor: Colors.transparent,
-      insetPadding: EdgeInsets.symmetric(horizontal: 16),
-      child: HowToPlayDialog(),
+    builder: (context) => Padding(
+      padding: EdgeInsets.symmetric(vertical: MediaQuery.paddingOf(context).vertical),
+      child: const Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: EdgeInsets.symmetric(horizontal: 16,vertical: 20),
+        child: HowToPlayDialog(),
+      ),
     ),
   );
 }
@@ -49,73 +53,84 @@ class HowToPlayDialog extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Opacity(opacity: 0, child: Icon(Icons.close)),
-                const Text(
+                // const Opacity(opacity: 0, child: Icon(Icons.close)),
+                Text(
                   _titleText,
                   style: kHeading,
                 ),
-                InkWell(
-                    onTap: () => Navigator.pop(context),
-                    child: const Icon(
-                      Icons.close,
-                      color: kDark,
-                    )),
+                // InkWell(
+                //     onTap: () => Navigator.pop(context),
+                //     child: const Icon(
+                //       Icons.close,
+                //       color: kDark,
+                //     )),
               ],
             ),
             const SizedBox(
               height: 32,
             ),
-            Wrap(
-              runSpacing: 24,
-              children: [
-                const Text(
-                  _hTp1,
-                  style: kBody,
+            Expanded(
+              child: SingleChildScrollView(
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom:48.0),
+                  child: Wrap(
+                    runSpacing: 24,
+                    children: [
+                      const Text(
+                        _hTp1,
+                        style: kBody,
+                      ),
+                      const Text(
+                        _hTp2,
+                        style: kBody,
+                      ),
+                      _hintAndIllustration(
+                          text: _hTp3,
+                          blockLetters: ["R", "O", "B", "I", "N"]
+                              .map((e) => GuessBlock(
+                                    guessLetter: e,
+                                    guessState: e == "R"
+                                        ? GuessBlockState.inRightPlace
+                                        : GuessBlockState.notInWord,
+                                  ))
+                              .toList()),
+                      _hintAndIllustration(
+                          text: _hTp4,
+                          blockLetters: ["S", "P", "E", "A", "R"]
+                              .map((e) => GuessBlock(
+                                    guessLetter: e,
+                                    guessState: e == "E"
+                                        ? GuessBlockState.inWord
+                                        : GuessBlockState.notInWord,
+                                  ))
+                              .toList()),
+                      _hintAndIllustration(
+                          text: _hTp5,
+                          blockLetters: ["L", "O", "O", "P", "S"]
+                              .map((e) => GuessBlock(
+                                    guessLetter: e,
+                                  ))
+                              .toList())
+                    ],
+                  ),
                 ),
-                const Text(
-                  _hTp2,
-                  style: kBody,
-                ),
-                _hintAndIllustration(
-                    text: _hTp3,
-                    blockLetters: ["R", "O", "B", "I", "N"]
-                        .map((e) => GuessBlock(
-                              guessLetter: e,
-                              guessState: e == "R"
-                                  ? GuessBlockState.inRightPlace
-                                  : GuessBlockState.notInWord,
-                            ))
-                        .toList()),
-                _hintAndIllustration(
-                    text: _hTp4,
-                    blockLetters: ["S", "P", "E", "A", "R"]
-                        .map((e) => GuessBlock(
-                              guessLetter: e,
-                              guessState: e == "E"
-                                  ? GuessBlockState.inWord
-                                  : GuessBlockState.notInWord,
-                            ))
-                        .toList()),
-                _hintAndIllustration(
-                    text: _hTp5,
-                    blockLetters: ["L", "O", "O", "P", "S"]
-                        .map((e) => GuessBlock(
-                              guessLetter: e,
-                            ))
-                        .toList())
-              ],
+              ),
             ),
-            const SizedBox(height: 40),
-            SizedBox(
-              height: 48,
-              child: Button(
-                buttonText: "Got it",
-                onPressed: () => Navigator.pop(context),
-                buttonType: ButtonType.secondary,
-                buttonSize: ButtonSize.small,
+            
+            Padding(
+              padding: const EdgeInsets.only(top:12.0),
+              child: SizedBox(
+                height: 48,
+                child: Button(
+                  buttonText: "Got it",
+                  onPressed: () => Navigator.pop(context),
+                  buttonType: ButtonType.secondary,
+                  buttonSize: ButtonSize.small,
+                ),
               ),
             )
           ],
