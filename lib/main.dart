@@ -12,10 +12,10 @@ import 'package:device_preview/device_preview.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SuffixAudioService().initAudio();
+  // SuffixAudioService().initAudio();
   runApp(
     DevicePreview(
-      enabled: true,
+      enabled: false,
       builder: (context) => const Suffix(), // Wrap your app
     ),
   );

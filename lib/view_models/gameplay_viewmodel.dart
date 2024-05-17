@@ -5,10 +5,11 @@ import 'package:suffix/models/word.dart';
 class GameplayViewModel extends ChangeNotifier {
   List<Word> words = [];
   int numberOfGuesses = 0;
-  int _letterPosition = 0;
+  int letterPosition = 0;
   int wordLength = 5;
   bool _wordIsComplete = false;
   bool wordIsCorrect = false;
+  bool boxIsSelected = false;
   final String wordToGuess = "LASER";
 
 // Populate the words array with words
@@ -25,14 +26,14 @@ class GameplayViewModel extends ChangeNotifier {
 
 // Handle typing of a key on the keyboard
   void handleTapLetter(String keyText) {
-    if (_letterPosition < wordLength) {
+    if (letterPosition < wordLength) {
       Letter letter = words
           .singleWhere((wrd) => wrd.wordId == numberOfGuesses)
           .allLetters
-          .singleWhere((lttr) => lttr.letterId == _letterPosition);
+          .singleWhere((lttr) => lttr.letterId == letterPosition);
 
       letter.letter = keyText;
-      _letterPosition += 1;
+      letterPosition += 1;
       handleWordIsComplete();
       notifyListeners();
     }
@@ -94,7 +95,7 @@ class GameplayViewModel extends ChangeNotifier {
       handleWordIsCorrect();
 
       numberOfGuesses += 1;
-      _letterPosition = 0;
+      letterPosition = 0;
       _wordIsComplete = false;
       handleWordIsComplete();
       notifyListeners();
@@ -103,14 +104,19 @@ class GameplayViewModel extends ChangeNotifier {
 
 // Backspace a letter the user typed
   void backSpace() {
-    if (_letterPosition > 0) {
+    if (letterPosition > 0) {
       Letter letter = words
           .singleWhere((wrd) => wrd.wordId == numberOfGuesses)
           .allLetters
-          .singleWhere((lttr) => lttr.letterId == _letterPosition - 1);
+          .singleWhere((lttr) => boxIsSelected
+              ? lttr.letterId == letterPosition
+              : lttr.letterId == letterPosition - 1);
 
       letter.letter = null;
-      _letterPosition -= 1;
+      if (!boxIsSelected) {
+        letterPosition -= 1;
+      }
+      boxIsSelected = false;
       handleWordIsComplete();
       notifyListeners();
     }
@@ -128,7 +134,7 @@ class GameplayViewModel extends ChangeNotifier {
     }
     words = emptyWords;
     numberOfGuesses = 0;
-    _letterPosition = 0;
+    letterPosition = 0;
     wordIsCorrect = false;
     _wordIsComplete = false;
     notifyListeners();
@@ -142,10 +148,23 @@ class GameplayViewModel extends ChangeNotifier {
 // Provides a letter hint for the user
   void getHint() {
     for (var i = 0; i < wordToGuess.length; i++) {
-      if (i == _letterPosition) {
-        handleTapLetter(wordToGuess[_letterPosition]);
+      if (i == letterPosition) {
+        handleTapLetter(wordToGuess[letterPosition]);
         return;
       }
     }
+  }
+
+// Handles making a box active
+  void handleActiveBox(int letterId, int wordId) {
+    if (numberOfGuesses == wordId) {
+      letterPosition = letterId;
+    }
+    notifyListeners();
+  }
+
+  void handleUpdateBoxIsSelected() {
+    boxIsSelected = true;
+    notifyListeners();
   }
 }

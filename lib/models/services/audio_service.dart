@@ -13,16 +13,16 @@ class SuffixAudioService {
     return _instance!;
   }
 
-  initAudio() async {
-    print("trying to play audio");
-    globalAudioPlayer = AudioPlayer();
-    await globalAudioPlayer
-        .play(AssetSource("music/global_music2.mpeg", mimeType: "mp3"));
-    globalAudioPlayer.setPlaybackRate(0.8);
-    // globalAudioPlayer
-    // globalAudioPlayer.pl
-    // globalAudioPlayer.
-  }
+  // initAudio() async {
+  //   print("trying to play audio");
+  //   globalAudioPlayer = AudioPlayer();
+  //   await globalAudioPlayer
+  //       .play(AssetSource("/music/global_music4.mp3", mimeType: "mp3"));
+  //   globalAudioPlayer.setPlaybackRate(0.8);
+  //   // globalAudioPlayer
+  //   // globalAudioPlayer.pl
+  //   // globalAudioPlayer.
+  // }
 
   stopAudio() {
     print("stopping audio......");

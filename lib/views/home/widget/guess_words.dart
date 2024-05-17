@@ -29,38 +29,52 @@ class WordRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double boxSize = ((MediaQuery.of(context).size.width / 7)-(16*2)).clamp(40, 47);
-    print(boxSize);
+    double boxSize =
+        ((MediaQuery.of(context).size.width / 7) - (16 * 2)).clamp(40, 47);
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: word.allLetters
-            .map((eachLetter) => Container(
-                  height: boxSize,
-                  width: boxSize,
-                  alignment: Alignment.center,
-                  margin: const EdgeInsets.only(right: 8),
-                  decoration: BoxDecoration(
-                    color: eachLetter.isInRightPosition
-                        ? kGreen
-                        : eachLetter.letterIsPresent
-                            ? kYellow
-                            : eachLetter.letterIsNotPresent
-                                ? kLight
-                                : kAccent,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(width: 1, color: kDark),
-                  ),
-                  child: eachLetter.letter != null
-                      ? Text(
-                          eachLetter.letter!,
-                          style: kHeading,
-                        )
-                      : null,
-                ))
-            .toList(),
-      ),
+      child: Consumer<GameplayViewModel>(builder: (context, value, child) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: word.allLetters
+              .map((eachLetter) => GestureDetector(
+                    onTap: () {
+                      value.handleActiveBox(eachLetter.letterId, word.wordId);
+                      value.handleUpdateBoxIsSelected();
+                    },
+                    child: Container(
+                      height: boxSize,
+                      width: boxSize,
+                      alignment: Alignment.center,
+                      margin: const EdgeInsets.only(right: 8),
+                      decoration: BoxDecoration(
+                        color: eachLetter.isInRightPosition
+                            ? kGreen
+                            : eachLetter.letterIsPresent
+                                ? kYellow
+                                : eachLetter.letterIsNotPresent
+                                    ? kLight
+                                    : kAccent,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          width: (value.numberOfGuesses == word.wordId &&
+                                  value.letterPosition == eachLetter.letterId)
+                              ? 2
+                              : 1,
+                          color: kDark,
+                        ),
+                      ),
+                      child: eachLetter.letter != null
+                          ? Text(
+                              eachLetter.letter!,
+                              style: kHeading,
+                            )
+                          : null,
+                    ),
+                  ))
+              .toList(),
+        );
+      }),
     );
   }
 }
