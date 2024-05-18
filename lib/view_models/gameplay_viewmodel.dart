@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:suffix/models/letter.dart';
-import 'package:suffix/models/word.dart';
+import 'package:suffix/models/game_service/game_service_repository.dart';
+import 'package:suffix/models/game_service/offline_game_service_impl.dart';
+import 'package:suffix/models/models/letter.dart';
+import 'package:suffix/models/models/word.dart';
 
 class GameplayViewModel extends ChangeNotifier {
   List<Word> words = [];
@@ -10,10 +12,16 @@ class GameplayViewModel extends ChangeNotifier {
   bool _wordIsComplete = false;
   bool wordIsCorrect = false;
   bool boxIsSelected = false;
-  final String wordToGuess = "LASER";
+  String wordToGuess = "LASER";
+
+  final IgameService gameService = OfflineGameServiceImpl();
 
 // Populate the words array with words
   void getWords() {
+    wordToGuess = gameService.getCurrentWord() ?? "LASER";
+    wordLength = gameService.getWordLenght();
+    print(wordToGuess);
+    print(wordToGuess.length);
     for (var i = 0; i < 6; i++) {
       List<Letter> newWord = [];
       for (var j = 0; j < wordLength; j++) {

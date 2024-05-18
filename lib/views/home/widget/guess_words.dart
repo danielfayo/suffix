@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:suffix/models/word.dart';
+import 'package:suffix/models/models/word.dart';
 import 'package:suffix/utils/colors.dart';
 import 'package:suffix/utils/text_styles.dart';
 import 'package:suffix/view_models/gameplay_viewmodel.dart';
