@@ -44,4 +44,16 @@ class GameLevel {
         return sevenLetterWordLevel;
     }
   }
+  int nextLevel(WordLength wordLength) {
+    switch (wordLength) {
+      case WordLength.five:
+        return fiveLetterWordLevel += 1;
+      case WordLength.four:
+        return fourLetterWordLevel += 1;
+      case WordLength.six:
+        return sixLetterWordLevel += 1;
+      case WordLength.seven:
+        return sevenLetterWordLevel += 1;
+    }
+  }
 }
