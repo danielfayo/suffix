@@ -27,6 +27,7 @@ Map<int, String> _feedbackSub = {
 void showFeedbackModal(BuildContext context) {
   showDialog(
     context: context,
+    barrierDismissible: false,
     builder: (context) => const Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: EdgeInsets.symmetric(horizontal: 16),
@@ -74,12 +75,13 @@ class FeedbackModal extends StatelessWidget {
                 SizedBox(
                   height: 48,
                   child: Button(
-                    buttonText: "New game",
+                    buttonText: "Next Level",
                     buttonType: ButtonType.primary,
                     buttonSize: ButtonSize.medium,
                     onPressed: () {
                       Navigator.pop(context);
                       value.handleRestartGame();
+                      value.handleGoToNextLevel();
                     },
                   ),
                 ),

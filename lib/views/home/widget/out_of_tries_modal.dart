@@ -11,6 +11,7 @@ import 'package:suffix/widgets/button.dart';
 void showOutOfTriesModal(BuildContext context) {
   showDialog(
     context: context,
+    barrierDismissible: false,
     builder: (context) => const Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: EdgeInsets.symmetric(horizontal: 16),
@@ -64,6 +65,7 @@ class OutOfTriesModal extends StatelessWidget {
                     onPressed: () {
                       Navigator.pop(context);
                       value.handleRestartGame();
+                      value.handleGoToNextLevel();
                     },
                   ),
                 ),
