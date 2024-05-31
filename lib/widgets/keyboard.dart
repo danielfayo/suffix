@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:suffix/utils/colors.dart';
 import 'package:suffix/utils/enums.dart';
 import 'package:suffix/utils/text_styles.dart';
 import 'package:suffix/view_models/gameplay_viewmodel.dart';
 import 'package:suffix/views/home/widget/feedback_modal.dart';
+import 'package:suffix/views/home/widget/invalid_word_snackbar.dart';
 import 'package:suffix/views/home/widget/out_of_tries_modal.dart';
 import 'package:suffix/widgets/button.dart';
 
@@ -56,7 +58,7 @@ List<Widget> _buildKeyRows(
       padding: EdgeInsets.symmetric(
           horizontal: (MediaQuery.of(context).size.width / 6) / 2),
       child: Row(
-          children: ["Z", "C", "V", "B", "N", "M", "DEL"]
+          children: ["Z", "X", "C", "V", "B", "N", "M", "DEL"]
               .map((e) => KeyboardKey(
                     keyText: e,
                     keyType: e.toLowerCase() == "del"
@@ -76,12 +78,17 @@ List<Widget> _buildKeyRows(
           buttonType: ButtonType.secondary,
           buttonSize: ButtonSize.medium,
           onPressed: () {
+            value.handleGuessedWordIsValid();
+            if (!value.guessedWordIsValid) {
+              showInvalidWordSnackbar(context);
+              return;
+            }
             value.newGuess();
             if (value.wordIsCorrect) {
               showFeedbackModal(context);
               return;
             }
-            if (value.numberOfGuesses > 5) {
+            if (!value.wordIsCorrect && value.numberOfGuesses > 5) {
               showOutOfTriesModal(context);
             }
           },
@@ -120,6 +127,8 @@ class KeyboardKey extends StatefulWidget {
 
 class _KeyboardKeyState extends State<KeyboardKey> {
   bool tapped = false;
+  SvgPicture backSpaceIcon = SvgPicture.asset("assets/back-space.svg",
+      semanticsLabel: 'Back Space Icon');
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -148,7 +157,9 @@ class _KeyboardKeyState extends State<KeyboardKey> {
             height: 40,
             margin: const EdgeInsets.all(2.0),
             decoration: BoxDecoration(
-                color: kAccent,
+                color: widget.keyText == "DEL"
+                    ? kAccent
+                    : colorMap[value.keyColor[widget.keyText]],
                 borderRadius: BorderRadius.circular(4.0),
                 boxShadow: tapped
                     ? []
@@ -165,10 +176,12 @@ class _KeyboardKeyState extends State<KeyboardKey> {
                   color: kDark,
                 )),
             child: Center(
-              child: Text(
-                widget.keyText,
-                style: kHeading,
-              ),
+              child: widget.keyText == "DEL"
+                  ? backSpaceIcon
+                  : Text(
+                      widget.keyText,
+                      style: kHeading,
+                    ),
             ),
           ),
         );
@@ -176,6 +189,13 @@ class _KeyboardKeyState extends State<KeyboardKey> {
     );
   }
 }
+
+Map<String, Color> colorMap = {
+  "kAccent": kAccent,
+  "kGreen": kGreen,
+  "kYellow": kYellow,
+  "kLight": kLight,
+};
 
 // Widget keyboardKey(String keyText, KeyType keyType) {
 //   return Expanded(

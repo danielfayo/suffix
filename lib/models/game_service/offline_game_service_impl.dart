@@ -35,7 +35,7 @@ class OfflineGameServiceImpl implements IgameService {
   @override
   String? getCurrentWord() {
     return fullWordList[currentWordLenght]
-            ?[level.gameInstanceLevel(currentWordLenght)]
+            ?[level.gameInstanceLevel(currentWordLenght) - 1]
         .trim()
         .toUpperCase();
   }
@@ -51,20 +51,21 @@ class OfflineGameServiceImpl implements IgameService {
       return;
     }
     Map<String, dynamic> usableGameData = jsonDecode(gameData);
+    // print(usableGameData);
     if (usableGameData["abandoned_game"] != null) {
       leftOverGameInfo =
           AbandonedGameInfo.fromJson(usableGameData["abandoned_game"]);
     }
 
-    print("we here");
     level = GameLevel.fromJson(usableGameData["level"]);
     currentWordLenght = usableGameData["word_length"].toString().toWordLength();
   }
 
   @override
-  String? getNextWord(bool passedPrevious) {
-    // TODO: implement getNextWord
-    throw UnimplementedError();
+  String? nextLevel() {
+    leftOverGameInfo = null;
+    level.nextLevel(currentWordLenght);
+    return getCurrentWord();
   }
 
   Future<Map<WordLength, List<String>>> generateWordList() async {
@@ -78,7 +79,7 @@ class OfflineGameServiceImpl implements IgameService {
         .then((value) {
       return value.split("\n");
     });
-    ;
+
     List<String> word2 = await rootBundle
         .loadString("assets/word_list/word2.text")
         .then((value) {
@@ -125,6 +126,29 @@ class OfflineGameServiceImpl implements IgameService {
 
   @override
   int getWordLenght() => currentWordLenght.toInt();
+
+  @override
+  bool wordIsInWordList(String word) {
+    bool existingWordList = false;
+    fullWordList.forEach((key, value) {
+      if (value.any(
+          (element) => element.trim().toLowerCase() == word.toLowerCase())) {
+        existingWordList = true;
+        return;
+      }
+    });
+    return existingWordList;
+  }
+
+  @override
+  AbandonedGameInfo? getAbandondedGame() {
+    return leftOverGameInfo;
+  }
+
+  @override
+  int getCurrentLevel() {
+    return level.gameInstanceLevel(currentWordLenght);
+  }
 }
 
 extension on WordLength {

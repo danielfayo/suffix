@@ -10,8 +10,9 @@ import 'package:suffix/widgets/button.dart';
 
 void showMenuSheet(BuildContext context) {
   showModalBottomSheet(
-    backgroundColor: Colors.transparent,
-    context: context, builder: (context) => const Menu());
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (context) => const Menu());
 }
 
 class Menu extends StatelessWidget {
@@ -22,7 +23,10 @@ class Menu extends StatelessWidget {
     return IntrinsicHeight(
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom +10, top: 8, left: 16),
+        padding: EdgeInsets.only(
+            bottom: MediaQuery.paddingOf(context).bottom + 10,
+            top: 8,
+            left: 16),
         alignment: Alignment.centerLeft,
         decoration: const BoxDecoration(
           color: kAccent,
@@ -73,7 +77,7 @@ class Menu extends StatelessWidget {
                     buttonText: "Mute sound",
                     buttonType: ButtonType.ghost,
                     buttonSize: ButtonSize.small,
-                    onPressed: ()=>SuffixAudioService().stopAudio(),
+                    onPressed: () => SuffixAudioService().stopAudio(),
                   ),
                 ),
               ],

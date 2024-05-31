@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
+import 'package:suffix/models/game_service/offline_game_service_impl.dart';
 import 'package:suffix/utils/colors.dart';
 import 'package:suffix/utils/enums.dart';
+import 'package:suffix/utils/text_styles.dart';
 import 'package:suffix/view_models/gameplay_viewmodel.dart';
 import 'package:suffix/views/home/widget/guess_words.dart';
 import 'package:suffix/views/home/widget/menu.dart';
@@ -21,6 +23,14 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addObserver(AppLifecycleListener(
+      onStateChange: (value) {
+        context.read<GameplayViewModel>().recordGame();
+        OfflineGameServiceImpl().saveGameState();
+      },
+    ));
+
     SchedulerBinding.instance.addPostFrameCallback((_) {
       context.read<GameplayViewModel>().getWords();
     });
@@ -65,9 +75,12 @@ class _GameScreenState extends State<GameScreen> {
                   ),
                 ],
               ),
+              Text(
+                "Level ${gameplayViewmodel.currentLevel}",
+                style: kBodySm,
+              ),
               const Expanded(
                 flex: 3,
-                
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

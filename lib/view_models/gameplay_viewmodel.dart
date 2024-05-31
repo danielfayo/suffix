@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:suffix/models/game_service/game_service_repository.dart';
 import 'package:suffix/models/game_service/offline_game_service_impl.dart';
+import 'package:suffix/models/models/abandoned_game_info.dart';
 import 'package:suffix/models/models/letter.dart';
 import 'package:suffix/models/models/word.dart';
 
@@ -13,6 +14,11 @@ class GameplayViewModel extends ChangeNotifier {
   bool wordIsCorrect = false;
   bool boxIsSelected = false;
   String wordToGuess = "LASER";
+  int currentLevel = 1;
+  bool guessedWordIsValid = false;
+  Map<String, String> keyColor = {
+    for (var letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')) letter: "kAccent"
+  };
 
   final IgameService gameService = OfflineGameServiceImpl();
 
@@ -20,8 +26,17 @@ class GameplayViewModel extends ChangeNotifier {
   void getWords() {
     wordToGuess = gameService.getCurrentWord() ?? "LASER";
     wordLength = gameService.getWordLenght();
+    currentLevel = gameService.getCurrentLevel();
+    if (gameService.getAbandondedGame() != null) {
+      AbandonedGameInfo gameInfo = gameService.getAbandondedGame()!;
+      words = gameInfo.words;
+      numberOfGuesses = gameInfo.numberOfGuesses;
+      letterPosition = gameInfo.letterPosition;
+      keyColor = gameInfo.keyColor;
+      notifyListeners();
+      return;
+    }
     print(wordToGuess);
-    print(wordToGuess.length);
     for (var i = 0; i < 6; i++) {
       List<Letter> newWord = [];
       for (var j = 0; j < wordLength; j++) {
@@ -30,6 +45,15 @@ class GameplayViewModel extends ChangeNotifier {
       words.add(Word(allLetters: newWord, wordId: i));
       notifyListeners();
     }
+  }
+
+  void recordGame() {
+    (gameService as OfflineGameServiceImpl).leftOverGameInfo =
+        AbandonedGameInfo(
+            words: words,
+            numberOfGuesses: numberOfGuesses,
+            letterPosition: letterPosition,
+            keyColor: keyColor);
   }
 
 // Handle typing of a key on the keyboard
@@ -44,6 +68,7 @@ class GameplayViewModel extends ChangeNotifier {
       letterPosition += 1;
       handleWordIsComplete();
       notifyListeners();
+      // recordGame();
     }
   }
 
@@ -80,28 +105,63 @@ class GameplayViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void handleGuessedWordIsValid() {
+    if (_wordIsComplete) {
+      List<String> guessedWordArr = [];
+      for (var letter in words
+          .singleWhere((wrd) => wrd.wordId == numberOfGuesses)
+          .allLetters) {
+        guessedWordArr.add(letter.letter!);
+      }
+      String guessedWord = guessedWordArr.join("");
+
+      guessedWordIsValid = gameService.wordIsInWordList(guessedWord);
+    }
+    notifyListeners();
+  }
+
 // Lets a user guess the word again if they didn't get it in the previous trial
   void newGuess() {
-    if (_wordIsComplete) {
+    if (_wordIsComplete && guessedWordIsValid) {
       Word guessedWord =
           words.singleWhere((wrd) => wrd.wordId == numberOfGuesses);
 
+      List<bool> usedLetters =
+          List<bool>.filled(guessedWord.allLetters.length, false);
+
       for (var i = 0; i < guessedWord.allLetters.length; i++) {
         Letter guessWordLetter = guessedWord.allLetters[i];
-        for (var j = 0; j < wordToGuess.length; j++) {
-          String eachLetter = wordToGuess[j];
-          if (guessWordLetter.letter == eachLetter &&
-              guessWordLetter.letterId == j) {
-            guessWordLetter.isInRightPosition = true;
-          } else if (guessWordLetter.letter == eachLetter) {
-            guessWordLetter.letterIsPresent = true;
-          } else {
+        if (guessWordLetter.letter == wordToGuess[i]) {
+          guessWordLetter.isInRightPosition = true;
+          usedLetters[i] = true;
+          keyColor[guessWordLetter.letter!] = "kGreen";
+        }
+      }
+
+      for (var i = 0; i < guessedWord.allLetters.length; i++) {
+        Letter guessWordLetter = guessedWord.allLetters[i];
+        if (!guessWordLetter.isInRightPosition) {
+          for (var j = 0; j < wordToGuess.length; j++) {
+            if (!usedLetters[j] && guessWordLetter.letter == wordToGuess[j]) {
+              guessWordLetter.letterIsPresent = true;
+              usedLetters[j] = true;
+              if (keyColor[guessWordLetter.letter!] != "kGreen") {
+                keyColor[guessWordLetter.letter!] = "kYellow";
+              }
+              break;
+            }
+          }
+          if (!guessWordLetter.letterIsPresent) {
             guessWordLetter.letterIsNotPresent = true;
+            if (keyColor[guessWordLetter.letter!] != "kGreen" &&
+                keyColor[guessWordLetter.letter!] != "kYellow") {
+              keyColor[guessWordLetter.letter!] = "kLight";
+            }
           }
         }
       }
-      handleWordIsCorrect();
 
+      handleWordIsCorrect();
       numberOfGuesses += 1;
       letterPosition = 0;
       _wordIsComplete = false;
@@ -127,6 +187,7 @@ class GameplayViewModel extends ChangeNotifier {
       boxIsSelected = false;
       handleWordIsComplete();
       notifyListeners();
+      // recordGame();
     }
   }
 
@@ -141,6 +202,10 @@ class GameplayViewModel extends ChangeNotifier {
       emptyWords.add(Word(allLetters: newWord, wordId: i));
     }
     words = emptyWords;
+    keyColor = {
+      for (var letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''))
+        letter: "kAccent"
+    };
     numberOfGuesses = 0;
     letterPosition = 0;
     wordIsCorrect = false;
@@ -157,10 +222,12 @@ class GameplayViewModel extends ChangeNotifier {
   void getHint() {
     for (var i = 0; i < wordToGuess.length; i++) {
       if (i == letterPosition) {
-        handleTapLetter(wordToGuess[letterPosition]);
-        return;
+        // handleTapLetter(wordToGuess[letterPosition]);
+        keyColor[wordToGuess[letterPosition]] = "kYellow";
+        // return;
       }
     }
+    notifyListeners();
   }
 
 // Handles making a box active
@@ -174,5 +241,12 @@ class GameplayViewModel extends ChangeNotifier {
   void handleUpdateBoxIsSelected() {
     boxIsSelected = true;
     notifyListeners();
+  }
+
+  void handleGoToNextLevel() {
+    wordToGuess = gameService.nextLevel()!;
+    print(wordToGuess);
+    gameService.saveGameState();
+    currentLevel = gameService.getCurrentLevel();
   }
 }
