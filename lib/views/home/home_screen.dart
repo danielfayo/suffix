@@ -4,6 +4,7 @@ import 'package:suffix/utils/enums.dart';
 import 'package:suffix/utils/text_styles.dart';
 import 'package:suffix/views/game_screen.dart';
 import 'package:suffix/views/home/widget/how_to_play.dart';
+import 'package:suffix/views/home/widget/letter_words_modal.dart';
 import 'package:suffix/widgets/button.dart';
 
 String _appNameText = "suffix";
@@ -41,18 +42,18 @@ class HomeScreen extends StatelessWidget {
                     buttonType: ButtonType.primary,
                     buttonSize: ButtonSize.large,
                     onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const GameScreen(),
-                        ),
-                      );
+                      showLetterWordsModal(context);
+                      // Navigator.pushReplacement(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => const GameScreen(),
+                      //   ),
+                      // );
                     },
                   ),
                 ),
                 const SizedBox(
                   height: 8,
-                  
                 ),
                 Button(
                   buttonText: _secondaryButtonText,

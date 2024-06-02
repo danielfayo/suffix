@@ -223,7 +223,10 @@ class GameplayViewModel extends ChangeNotifier {
     for (var i = 0; i < wordToGuess.length; i++) {
       if (i == letterPosition) {
         // handleTapLetter(wordToGuess[letterPosition]);
-        keyColor[wordToGuess[letterPosition]] = "kYellow";
+        String letterColor = keyColor[wordToGuess[letterPosition]]!;
+        if (letterColor != "KGreen") {
+          letterColor = "kYellow";
+        }
         // return;
       }
     }
