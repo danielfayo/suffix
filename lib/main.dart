@@ -22,8 +22,26 @@ void main() {
   );
 }
 
-class Suffix extends StatelessWidget {
+class Suffix extends StatefulWidget {
   const Suffix({super.key});
+
+  @override
+  State<Suffix> createState() => _SuffixState();
+}
+
+class _SuffixState extends State<Suffix> {
+
+@override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addObserver(AppLifecycleListener(
+      onStateChange: (value) {
+        context.read<GameplayViewModel>().recordGame();
+        OfflineGameServiceImpl().saveGameState();
+      },
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {

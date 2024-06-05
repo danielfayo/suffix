@@ -6,6 +6,7 @@ abstract class IgameService {
   void initGame();
   String? getCurrentWord();
   String? nextLevel();
+  String? getNewWord(String oldWord);
   Future<bool> saveGameState();
   int getWordLenght();
   bool wordIsInWordList(String word);

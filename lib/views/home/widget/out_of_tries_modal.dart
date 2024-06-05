@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:suffix/models/game_service/offline_game_service_impl.dart';
 import 'package:suffix/utils/colors.dart';
 import 'package:suffix/utils/enums.dart';
 import 'package:suffix/utils/text_styles.dart';
@@ -64,8 +65,7 @@ class OutOfTriesModal extends StatelessWidget {
                     buttonSize: ButtonSize.medium,
                     onPressed: () {
                       Navigator.pop(context);
-                      value.handleRestartGame();
-                      value.handleGoToNextLevel();
+                      value.getLevelNewWord(value.wordToGuess);
                     },
                   ),
                 ),
@@ -79,7 +79,9 @@ class OutOfTriesModal extends StatelessWidget {
                     buttonType: ButtonType.ghost,
                     buttonSize: ButtonSize.medium,
                     onPressed: () {
-                      value.handleRestartGame();
+                      value.getLevelNewWord(value.wordToGuess);
+                      context.read<GameplayViewModel>().recordGame();
+                      OfflineGameServiceImpl().saveGameState();
                       Navigator.pop(context);
                       Navigator.pushReplacement(
                         context,
@@ -88,7 +90,7 @@ class OutOfTriesModal extends StatelessWidget {
                           child: const HomeScreen(),
                         ),
                       );
-                      value.emptyAllWords();
+                      // value.emptyAllWords();
                     },
                   ),
                 ),

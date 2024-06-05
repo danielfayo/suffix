@@ -12,7 +12,6 @@ class GameplayViewModel extends ChangeNotifier {
   int wordLength = 5;
   bool _wordIsComplete = false;
   bool wordIsCorrect = false;
-  bool boxIsSelected = false;
   String wordToGuess = "LASER";
   int currentLevel = 1;
   bool guessedWordIsValid = false;
@@ -48,12 +47,12 @@ class GameplayViewModel extends ChangeNotifier {
   }
 
   void recordGame() {
-    (gameService as OfflineGameServiceImpl).leftOverGameInfo =
-        AbandonedGameInfo(
-            words: words,
-            numberOfGuesses: numberOfGuesses,
-            letterPosition: letterPosition,
-            keyColor: keyColor);
+    (gameService as OfflineGameServiceImpl).recordGame(AbandonedGameInfo(
+      words: words,
+      numberOfGuesses: numberOfGuesses,
+      letterPosition: letterPosition,
+      keyColor: keyColor,
+    ));
   }
 
 // Handle typing of a key on the keyboard
@@ -65,10 +64,11 @@ class GameplayViewModel extends ChangeNotifier {
           .singleWhere((lttr) => lttr.letterId == letterPosition);
 
       letter.letter = keyText;
-      letterPosition += 1;
+      if (letterPosition < wordToGuess.length - 1) {
+        letterPosition += 1;
+      }
       handleWordIsComplete();
       notifyListeners();
-      // recordGame();
     }
   }
 
@@ -172,23 +172,23 @@ class GameplayViewModel extends ChangeNotifier {
 
 // Backspace a letter the user typed
   void backSpace() {
-    if (letterPosition > 0) {
-      Letter letter = words
-          .singleWhere((wrd) => wrd.wordId == numberOfGuesses)
-          .allLetters
-          .singleWhere((lttr) => boxIsSelected
-              ? lttr.letterId == letterPosition
-              : lttr.letterId == letterPosition - 1);
+    Word activeWord = words.singleWhere((wrd) => wrd.wordId == numberOfGuesses);
+    bool activeLetterIsEmpty =
+        activeWord.allLetters[letterPosition].letter == null;
+    Letter selectedLetter = activeLetterIsEmpty
+        ? letterPosition > 0
+            ? activeWord.allLetters[letterPosition - 1]
+            : activeWord.allLetters[letterPosition]
+        : activeWord.allLetters[letterPosition];
 
-      letter.letter = null;
-      if (!boxIsSelected) {
-        letterPosition -= 1;
-      }
-      boxIsSelected = false;
-      handleWordIsComplete();
-      notifyListeners();
-      // recordGame();
-    }
+    selectedLetter.letter = null;
+    (activeWord.allLetters[letterPosition].letter == null && letterPosition > 0)
+        ? activeLetterIsEmpty
+            ? letterPosition -= 1
+            : letterPosition
+        : null;
+    handleWordIsComplete();
+    notifyListeners();
   }
 
 // Restarts the entire game
@@ -213,6 +213,11 @@ class GameplayViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void getLevelNewWord(String oldWord) {
+    wordToGuess = gameService.getNewWord(oldWord)!;
+    handleRestartGame();
+  }
+
 // Empties the word array
   void emptyAllWords() {
     words = [];
@@ -223,11 +228,9 @@ class GameplayViewModel extends ChangeNotifier {
     for (var i = 0; i < wordToGuess.length; i++) {
       if (i == letterPosition) {
         // handleTapLetter(wordToGuess[letterPosition]);
-        String letterColor = keyColor[wordToGuess[letterPosition]]!;
-        if (letterColor != "KGreen") {
-          letterColor = "kYellow";
+        if (keyColor[wordToGuess[letterPosition]] != "KGreen") {
+          keyColor[wordToGuess[letterPosition]] = "kYellow";
         }
-        // return;
       }
     }
     notifyListeners();
@@ -238,11 +241,6 @@ class GameplayViewModel extends ChangeNotifier {
     if (numberOfGuesses == wordId) {
       letterPosition = letterId;
     }
-    notifyListeners();
-  }
-
-  void handleUpdateBoxIsSelected() {
-    boxIsSelected = true;
     notifyListeners();
   }
 

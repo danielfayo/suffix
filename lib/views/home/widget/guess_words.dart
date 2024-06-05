@@ -40,7 +40,6 @@ class WordRow extends StatelessWidget {
               .map((eachLetter) => GestureDetector(
                     onTap: () {
                       value.handleActiveBox(eachLetter.letterId, word.wordId);
-                      value.handleUpdateBoxIsSelected();
                     },
                     child: Container(
                       height: boxSize,

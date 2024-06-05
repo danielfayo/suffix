@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:suffix/models/game_service/offline_game_service_impl.dart';
 import 'package:suffix/utils/colors.dart';
 import 'package:suffix/utils/enums.dart';
 import 'package:suffix/utils/text_styles.dart';
+import 'package:suffix/views/game_screen.dart';
 import 'package:suffix/widgets/button.dart';
 
 void showLetterWordsModal(BuildContext context) {
@@ -24,7 +26,7 @@ class LetterWordsModal extends StatefulWidget {
 
 class _LetterWordsModalState extends State<LetterWordsModal> {
   int selectedNumber = 5;
-  
+
   @override
   Widget build(BuildContext context) {
     return IntrinsicHeight(
@@ -99,10 +101,19 @@ class _LetterWordsModalState extends State<LetterWordsModal> {
             SizedBox(
               height: 48,
               child: Button(
-                buttonText: "Play",
+                buttonText: "Start",
                 buttonType: ButtonType.secondary,
                 buttonSize: ButtonSize.medium,
-                onPressed: () {},
+                onPressed: () {
+                  OfflineGameServiceImpl().currentWordLenght =
+                      selectedNumber.toWordLength();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const GameScreen(),
+                    ),
+                  );
+                },
               ),
             )
           ],

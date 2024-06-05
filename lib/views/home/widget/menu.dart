@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:suffix/models/game_service/offline_game_service_impl.dart';
 import 'package:suffix/models/services/audio_service.dart';
 import 'package:suffix/utils/colors.dart';
 import 'package:suffix/utils/enums.dart';
@@ -47,7 +48,7 @@ class Menu extends StatelessWidget {
                     buttonType: ButtonType.ghost,
                     buttonSize: ButtonSize.small,
                     onPressed: () {
-                      value.handleRestartGame();
+                      value.getLevelNewWord(value.wordToGuess);
                       Navigator.pop(context);
                     },
                   ),
@@ -59,6 +60,8 @@ class Menu extends StatelessWidget {
                     buttonType: ButtonType.ghost,
                     buttonSize: ButtonSize.small,
                     onPressed: () {
+                      context.read<GameplayViewModel>().recordGame();
+                      OfflineGameServiceImpl().saveGameState();
                       Navigator.pop(context);
                       Navigator.pushReplacement(
                         context,
@@ -67,7 +70,6 @@ class Menu extends StatelessWidget {
                           child: const HomeScreen(),
                         ),
                       );
-                      value.emptyAllWords();
                     },
                   ),
                 ),

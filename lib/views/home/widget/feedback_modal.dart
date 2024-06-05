@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:suffix/models/game_service/offline_game_service_impl.dart';
 import 'package:suffix/utils/colors.dart';
 import 'package:suffix/utils/enums.dart';
 import 'package:suffix/utils/text_styles.dart';
@@ -96,6 +97,8 @@ class FeedbackModal extends StatelessWidget {
                     buttonSize: ButtonSize.medium,
                     onPressed: () {
                       value.handleRestartGame();
+                      context.read<GameplayViewModel>().recordGame();
+                      OfflineGameServiceImpl().saveGameState();
                       Navigator.pop(context);
                       Navigator.pushReplacement(
                         context,
@@ -104,7 +107,6 @@ class FeedbackModal extends StatelessWidget {
                           child: const HomeScreen(),
                         ),
                       );
-                      value.emptyAllWords();
                     },
                   ),
                 ),

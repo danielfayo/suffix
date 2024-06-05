@@ -24,8 +24,9 @@ class OfflineGameServiceImpl implements IgameService {
   late Map<WordLength, List<String>> fullWordList;
   late GameLevel level = GameLevel.defaultLevel();
   late WordLength currentWordLenght;
-  AbandonedGameInfo? leftOverGameInfo;
+  Map<WordLength, AbandonedGameInfo> leftOverGameInfo = {};
   String _userId = "";
+  Set<String> oldWords = {};
 
   set userId(String value) {
     _userId = value;
@@ -38,6 +39,10 @@ class OfflineGameServiceImpl implements IgameService {
             ?[level.gameInstanceLevel(currentWordLenght) - 1]
         .trim()
         .toUpperCase();
+  }
+
+  recordGame(AbandonedGameInfo info) {
+    leftOverGameInfo[currentWordLenght] = info;
   }
 
   @override
@@ -54,7 +59,10 @@ class OfflineGameServiceImpl implements IgameService {
     // print(usableGameData);
     if (usableGameData["abandoned_game"] != null) {
       leftOverGameInfo =
-          AbandonedGameInfo.fromJson(usableGameData["abandoned_game"]);
+          (usableGameData["abandoned_game"] as Map).map((key, value) {
+        return MapEntry(
+            (key as String).toWordLength(), AbandonedGameInfo.fromJson(value));
+      });
     }
 
     level = GameLevel.fromJson(usableGameData["level"]);
@@ -63,8 +71,18 @@ class OfflineGameServiceImpl implements IgameService {
 
   @override
   String? nextLevel() {
-    leftOverGameInfo = null;
+    leftOverGameInfo = {};
     level.nextLevel(currentWordLenght);
+    return getCurrentWord();
+  }
+
+  @override
+  String? getNewWord(String oldWord) {
+    List<String> wordLengthWords = fullWordList[currentWordLenght]!;
+    wordLengthWords.remove(oldWord.toLowerCase());
+    fullWordList[currentWordLenght] = wordLengthWords;
+    oldWords.add(oldWord);
+    leftOverGameInfo = {};
     return getCurrentWord();
   }
 
@@ -116,10 +134,15 @@ class OfflineGameServiceImpl implements IgameService {
 
   @override
   Future<bool> saveGameState() async {
+    Map<String, dynamic> tempAbandonedGame = leftOverGameInfo.map((key, value) {
+      return MapEntry(key.name, value.toJson());
+    });
+
     Map<String, dynamic> gameState = {
-      "abandoned_game": leftOverGameInfo?.toJson(),
+      "abandoned_game": tempAbandonedGame,
       "word_length": currentWordLenght.name,
-      "level": level.toJson()
+      "level": level.toJson(),
+      "oldWords": oldWords.toList()
     };
     return await _preferences.setString("game_data", jsonEncode(gameState));
   }
@@ -141,9 +164,7 @@ class OfflineGameServiceImpl implements IgameService {
   }
 
   @override
-  AbandonedGameInfo? getAbandondedGame() {
-    return leftOverGameInfo;
-  }
+  AbandonedGameInfo? getAbandondedGame() => leftOverGameInfo[currentWordLenght];
 
   @override
   int getCurrentLevel() {
@@ -162,6 +183,23 @@ extension on WordLength {
         return 6;
       case WordLength.seven:
         return 7;
+    }
+  }
+}
+
+extension ConvertToWordLength on num {
+  WordLength toWordLength() {
+    switch (this) {
+      case 5:
+        return WordLength.five;
+      case 6:
+        return WordLength.six;
+      case 4:
+        return WordLength.four;
+      case 7:
+        return WordLength.seven;
+      default:
+        return WordLength.five;
     }
   }
 }

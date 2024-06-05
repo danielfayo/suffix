@@ -28,4 +28,12 @@ class Letter {
     "letter_is_present":letterIsPresent,
     "letter_in_right_position":isInRightPosition
   };
+
+  // @override
+  // bool operator ==(covariant other) => other is Letter && letterId ==other.letterId;
+  
+  // @override
+  // int get hashCode => letterId.hashCode;
+  
+
 }
