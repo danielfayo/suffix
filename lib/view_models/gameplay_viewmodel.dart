@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:suffix/models/game_service/game_service_repository.dart';
 import 'package:suffix/models/game_service/offline_game_service_impl.dart';
@@ -18,6 +20,7 @@ class GameplayViewModel extends ChangeNotifier {
   Map<String, String> keyColor = {
     for (var letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')) letter: "kAccent"
   };
+  bool noMoreHint = false;
 
   final IgameService gameService = OfflineGameServiceImpl();
 
@@ -225,14 +228,34 @@ class GameplayViewModel extends ChangeNotifier {
 
 // Provides a letter hint for the user
   void getHint() {
-    for (var i = 0; i < wordToGuess.length; i++) {
-      if (i == letterPosition) {
-        // handleTapLetter(wordToGuess[letterPosition]);
-        if (keyColor[wordToGuess[letterPosition]] != "KGreen") {
-          keyColor[wordToGuess[letterPosition]] = "kYellow";
-        }
-      }
+    List<String> knownLetters = keyColor.keys
+        .where((eachColor) => (keyColor[eachColor] == "kYellow" ||
+            keyColor[eachColor] == "kGreen"))
+        .toList();
+
+    List<String> unknownLetters = wordToGuess
+        .split("")
+        .where(
+          (element) => !knownLetters.contains(element),
+        )
+        .toList();
+    if (unknownLetters.isEmpty) {
+      noMoreHint = true;
     }
+    if (unknownLetters.isNotEmpty) {
+      String randomLetter =
+          unknownLetters[Random().nextInt(unknownLetters.length)];
+      keyColor[randomLetter] = "kYellow";
+    }
+
+    // for (var i = 0; i < wordToGuess.length; i++) {
+    //   if (i == letterPosition) {
+    //     // handleTapLetter(wordToGuess[letterPosition]);
+    //     if (keyColor[wordToGuess[letterPosition]] != "KGreen") {
+    //       keyColor[wordToGuess[letterPosition]] = "kYellow";
+    //     }
+    //   }
+    // }
     notifyListeners();
   }
 
