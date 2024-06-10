@@ -26,6 +26,7 @@ class GameplayViewModel extends ChangeNotifier {
 
 // Populate the words array with words
   void getWords() {
+    defaultGame();
     wordToGuess = gameService.getCurrentWord() ?? "LASER";
     wordLength = gameService.getWordLenght();
     currentLevel = gameService.getCurrentLevel();
@@ -38,15 +39,31 @@ class GameplayViewModel extends ChangeNotifier {
       notifyListeners();
       return;
     }
-    print(wordToGuess);
+
     for (var i = 0; i < 6; i++) {
       List<Letter> newWord = [];
       for (var j = 0; j < wordLength; j++) {
         newWord.add(Letter(letterId: j));
       }
+
       words.add(Word(allLetters: newWord, wordId: i));
       notifyListeners();
     }
+  }
+
+  defaultGame() {
+    words = [];
+    numberOfGuesses = 0;
+    letterPosition = 0;
+    keyColor = {
+      for (var letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''))
+        letter: "kAccent"
+    };
+    // noMoreHint = false;
+    // _wordIsComplete = false;
+    // wordIsCorrect = false;
+    // numberOfGuesses = 0;
+    // letterPosition = 0;
   }
 
   void recordGame() {

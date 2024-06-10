@@ -17,7 +17,9 @@ void main() {
   runApp(
     DevicePreview(
       enabled: false,
-      builder: (context) => const Suffix(), // Wrap your app
+      builder: (context) => ChangeNotifierProvider(
+        create: (context) => GameplayViewModel(),
+        child: const Suffix()), // Wrap your app
     ),
   );
 }
@@ -45,17 +47,14 @@ class _SuffixState extends State<Suffix> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => GameplayViewModel(),
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(),
-        home: MaterialApp(
-            theme: Theme.of(context)
-                .copyWith(textTheme: GoogleFonts.spaceGroteskTextTheme()),
-            // theme: ThemThemeData(textTheme: GoogleFonts.spaceGroteskTextTheme()),
-            home: const HomeScreen()),
-      ),
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(),
+      home: MaterialApp(
+          theme: Theme.of(context)
+              .copyWith(textTheme: GoogleFonts.spaceGroteskTextTheme()),
+          // theme: ThemThemeData(textTheme: GoogleFonts.spaceGroteskTextTheme()),
+          home: const HomeScreen()),
     );
   }
 }

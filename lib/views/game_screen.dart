@@ -38,6 +38,7 @@ class _GameScreenState extends State<GameScreen> {
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
         child: Consumer<GameplayViewModel>(
             builder: (context, gameplayViewmodel, child) {
+          print(gameplayViewmodel.words.length);
           return Column(
             children: [
               Row(
