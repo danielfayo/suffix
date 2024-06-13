@@ -12,4 +12,7 @@ abstract class IgameService {
   bool wordIsInWordList(String word);
   AbandonedGameInfo? getAbandondedGame();
   int getCurrentLevel();
+  int getAvailableCoins();
+  void deductCoins();
+  void incrementCoins(int amount);
 }

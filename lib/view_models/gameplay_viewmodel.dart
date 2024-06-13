@@ -24,6 +24,10 @@ class GameplayViewModel extends ChangeNotifier {
 
   final IgameService gameService = OfflineGameServiceImpl();
 
+  int getAvailableCoinsAmount() {
+    return gameService.getAvailableCoins();
+  }
+
 // Populate the words array with words
   void getWords() {
     defaultGame();
@@ -120,6 +124,7 @@ class GameplayViewModel extends ChangeNotifier {
       String letters = lettersArr.join("").toUpperCase();
       if (letters == wordToGuess) {
         wordIsCorrect = true;
+        gameService.incrementCoins(wordLength);
       }
     }
     notifyListeners();
@@ -263,6 +268,7 @@ class GameplayViewModel extends ChangeNotifier {
       String randomLetter =
           unknownLetters[Random().nextInt(unknownLetters.length)];
       keyColor[randomLetter] = "kYellow";
+      gameService.deductCoins();
     }
 
     // for (var i = 0; i < wordToGuess.length; i++) {

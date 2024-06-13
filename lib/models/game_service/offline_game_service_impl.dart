@@ -27,6 +27,7 @@ class OfflineGameServiceImpl implements IgameService {
   Map<WordLength, AbandonedGameInfo> leftOverGameInfo = {};
   String _userId = "";
   Set<String> oldWords = {};
+  int _avaiableCoins = 0;
 
   set userId(String value) {
     _userId = value;
@@ -53,6 +54,7 @@ class OfflineGameServiceImpl implements IgameService {
     String? gameData = _preferences.getString("game_data");
     if (gameData == null) {
       currentWordLenght = WordLength.five;
+      _avaiableCoins = 50;
       return;
     }
     Map<String, dynamic> usableGameData = jsonDecode(gameData);
@@ -67,6 +69,22 @@ class OfflineGameServiceImpl implements IgameService {
 
     level = GameLevel.fromJson(usableGameData["level"]);
     currentWordLenght = usableGameData["word_length"].toString().toWordLength();
+    _avaiableCoins = usableGameData["available_coins"];
+  }
+
+  @override
+  int getAvailableCoins() => _avaiableCoins;
+
+  @override
+  void deductCoins() {
+    if (_avaiableCoins >= 5) {
+      _avaiableCoins = _avaiableCoins - 5;
+    }
+  }
+
+  @override
+  void incrementCoins(int amount) {
+    _avaiableCoins = _avaiableCoins + amount;
   }
 
   @override
@@ -142,7 +160,8 @@ class OfflineGameServiceImpl implements IgameService {
       "abandoned_game": tempAbandonedGame,
       "word_length": currentWordLenght.name,
       "level": level.toJson(),
-      "oldWords": oldWords.toList()
+      "oldWords": oldWords.toList(),
+      "available_coins": _avaiableCoins,
     };
     return await _preferences.setString("game_data", jsonEncode(gameState));
   }
@@ -154,7 +173,7 @@ class OfflineGameServiceImpl implements IgameService {
   bool wordIsInWordList(String word) {
     bool existingWordList = false;
     fullWordList.forEach((key, value) {
-      if (value.any(
+      if ([...value, ...oldWords].any(
           (element) => element.trim().toLowerCase() == word.toLowerCase())) {
         existingWordList = true;
         return;
