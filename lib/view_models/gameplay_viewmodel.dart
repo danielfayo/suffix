@@ -127,6 +127,7 @@ class GameplayViewModel extends ChangeNotifier {
         gameService.incrementCoins(wordLength);
       }
     }
+    // print(wordToGuess);
     notifyListeners();
   }
 

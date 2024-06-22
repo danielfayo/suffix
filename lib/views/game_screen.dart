@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:suffix/utils/colors.dart';
 import 'package:suffix/utils/enums.dart';
@@ -57,27 +58,38 @@ class _GameScreenState extends State<GameScreen> {
                     ),
                   ),
                   Coins(
-                      numberOfCoins:
-                          gameplayViewmodel.getAvailableCoinsAmount()),
+                    numberOfCoins: gameplayViewmodel.getAvailableCoinsAmount(),
+                  ),
                   SizedBox(
                       width: 96,
                       height: 36,
                       child: InkWell(
-                        onTap: () => gameplayViewmodel.getHint(),
+                        onTap: () {
+                          if (gameplayViewmodel.noMoreHint) {
+                            Fluttertoast.showToast(
+                              msg: "No more hints",
+                              backgroundColor: kLight,
+                              textColor: kDark,
+                              gravity: ToastGravity.CENTER,
+                            );
+                          }
+                          gameplayViewmodel.getHint();
+                        },
                         child: Container(
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                              color: kAccent,
-                              border: Border.all(color: kDark, width: 1),
-                              borderRadius: BorderRadius.circular(99),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: kDark,
-                                  spreadRadius: 0,
-                                  blurRadius: 0,
-                                  offset: Offset(3, 3),
-                                ),
-                              ]),
+                            color: kAccent,
+                            border: Border.all(color: kDark, width: 1),
+                            borderRadius: BorderRadius.circular(99),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: kDark,
+                                spreadRadius: 0,
+                                blurRadius: 0,
+                                offset: Offset(3, 3),
+                              ),
+                            ],
+                          ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [

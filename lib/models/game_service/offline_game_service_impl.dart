@@ -47,7 +47,7 @@ class OfflineGameServiceImpl implements IgameService {
   }
 
   @override
-  void initGame() async {
+  Future<void> initGame() async {
     _preferences = await SharedPreferences.getInstance();
     userId = _preferences.getString("user_id") ?? const UuidV4().generate();
     fullWordList = await generateWordList();
