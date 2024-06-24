@@ -21,9 +21,9 @@ class OfflineGameServiceImpl implements IgameService {
 
   late SharedPreferences _preferences;
 
-  late Map<WordLength, List<String>> fullWordList;
-  late GameLevel level = GameLevel.defaultLevel();
-  late WordLength currentWordLenght;
+  Map<WordLength, List<String>> fullWordList ={};
+  GameLevel level = GameLevel.defaultLevel();
+  WordLength currentWordLenght = WordLength.five;
   Map<WordLength, AbandonedGameInfo> leftOverGameInfo = {};
   String _userId = "";
   Set<String> oldWords = {};
