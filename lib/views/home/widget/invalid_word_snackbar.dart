@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:suffix/utils/colors.dart';
 import 'package:suffix/utils/text_styles.dart';
 
 void showInvalidWordSnackbar(BuildContext context) {
-  ScaffoldMessenger.of(context).showSnackBar(invalidWordSnackbar);
+  // ScaffoldMessenger.of(context).showSnackBar(invalidWordSnackbar);
+  Fluttertoast.showToast(
+    msg: "Invalid word",
+    backgroundColor: kLight,
+    textColor: kDark,
+    gravity: ToastGravity.CENTER,
+  );
 }
 
 SnackBar invalidWordSnackbar = SnackBar(

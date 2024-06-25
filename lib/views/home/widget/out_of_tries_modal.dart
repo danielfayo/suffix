@@ -60,7 +60,7 @@ class OutOfTriesModal extends StatelessWidget {
                 SizedBox(
                   height: 48,
                   child: Button(
-                    buttonText: "New game",
+                    buttonText: "Play again",
                     buttonType: ButtonType.primary,
                     buttonSize: ButtonSize.medium,
                     onPressed: () {

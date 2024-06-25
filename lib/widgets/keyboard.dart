@@ -88,7 +88,7 @@ List<Widget> _buildKeyRows(
               showFeedbackModal(context);
               return;
             }
-            if (!value.wordIsCorrect && value.numberOfGuesses > 5) {
+            if (value.numberOfGuesses > 5 && !value.wordIsCorrect) {
               showOutOfTriesModal(context);
             }
           },
