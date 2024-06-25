@@ -14,7 +14,7 @@ Map<int, String> _feedbackHeading = {
   2: "Great job!",
   3: "Great job!",
   4: "Great job!",
-  5: "Clever!"
+  6: "Clever!"
 };
 
 Map<int, String> _feedbackSub = {
@@ -22,7 +22,7 @@ Map<int, String> _feedbackSub = {
   2: "You guessed the word in two tries",
   3: "You guessed the word in three tries",
   4: "You guessed the word in four tries",
-  5: "You figured it out in just five tries"
+  6: "You figured it out in just five tries"
 };
 
 void showFeedbackModal(BuildContext context) {
